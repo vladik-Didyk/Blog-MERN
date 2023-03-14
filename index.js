@@ -1,20 +1,20 @@
 import express from "express"; // import the express framework
-import jwt from "jsonwebtoken"; // import jwt library for token generation
 import mongoose from "mongoose"; // import mongoose for MongoDB connectivity
 import net from "net"; // import net for checking if the port is available
-import { validationResult } from "express-validator"; // import validationResult from express-validator
-import { registerValidation } from "./validations/auth.js"; // import registerValidation from validation folder
-import bcrypt from "bcrypt"; // import bcrypt for password encryption
+import { registerValidation, loginValidation } from "./validations/auth.js"; // import registerValidation from validation folder
 import checkAuth from "./utils/checkAuth.js"; // import checkAuth from utils folder
+
+import {
+  registerController,
+  loginController,
+  getUserController,
+} from "./controllers/UserController.js";
 
 import dotenv from "dotenv"; // import dotenv for environment variables
 dotenv.config(); // load environment variables
 
 /* ENVIRONMENT VARIABLES */
 const MONGO_URL = process.env.MONGO_URL; // set MONGO_URL from environment variables
-
-// Data imports
-import UserModel from "./models/User.js"; // import User model from models folder
 
 /* CONFIGURATION */
 const app = express(); // create an instance of express
@@ -87,123 +87,10 @@ app.use((err, req, res, next) => {
 app.get("/", (req, res) => {}); // define the root route
 
 // Login route
-app.post("/auth/login", async (req, res) => {
-  try {
-    const user = await UserModel.findOne({ email: req.body.email });
-
-    if (!user) {
-      return res.status(400).json({
-        message: "User not found",
-      });
-    }
-
-    const isValidPassword = await bcrypt.compare(
-      req.body.password,
-      user._doc.passwordHash
-    );
-
-    if (!isValidPassword) {
-      return res.status(400).json({
-        message: "Invalid user or password",
-      });
-    }
-
-    // generate token
-    const token = jwt.sign(
-      {
-        _id: user._id,
-      },
-      "secret123",
-      {
-        expiresIn: "30d",
-      }
-    );
-    // Return user data and token without password hash
-    const { passwordHash, ...userData } = user._doc;
-    res.json({
-      ...userData,
-      token,
-    });
-  } catch (error) {
-    // Handle errors
-    console.log("🚀 ~ file: index.js:126 ~ app.post ~ error:", error);
-    res.status(500).json({
-      message: "Something went wrong",
-    });
-  }
-});
+app.post("/auth/login", loginValidation, loginController);
 
 // Register route
-app.post("/auth/register", registerValidation, async (req, res) => {
-  try {
-    // Validate request data
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    // Hash password
-    const password = req.body.password;
-    const salt = await bcrypt.genSalt(10);
-    const passwordHashed = await bcrypt.hash(password, salt);
-
-    // Save user to database
-    const doc = new UserModel({
-      email: req.body.email,
-      fullName: req.body.fullName,
-      avatarUrl: req.body.avatarUrl,
-      passwordHash: passwordHashed,
-    });
-    const user = await doc.save();
-
-    // Generate JWT token
-    const token = jwt.sign(
-      {
-        _id: user._id,
-      },
-      "secret123",
-      {
-        expiresIn: "30d",
-      }
-    );
-
-    // Return user data and token without password hash
-    const { passwordHash, ...userData } = user._doc;
-    res.json({
-      ...userData,
-      token,
-    });
-  } catch (error) {
-    // Handle errors
-    console.log("🚀 ~ file: index.js:175 ~ app.post ~ error:", error);
-    res.status(500).json({
-      message: "Something went wrong",
-    });
-  }
-});
-
+app.post("/auth/register", registerValidation, registerController);
 
 // Get data about me
-app.get("/auth/me", checkAuth, async (req, res) => {
-    try {
-        console.log("🚀 ~ file: index.js:192 ~ app.post ~ req.userId", req.userId);
-        console.log("🚀 ~ file: index.js:192 ~ app.post ~ req.user._id", req.user._id);
-      const user = await UserModel.findById(req.user);
-      console.log("🚀 ~ file: index.js:192 ~ app.post ~ user", user);
-      if (!user) {
-        return res.status(400).json({
-          message: "/auth/me - User not found",
-        });
-      }
-  
-      const { passwordHash, ...userData } = user._doc;
-      res.json(userData);
-
-    } catch (error) {
-      // Handle errors
-      console.log("🚀 ~ file: index.js:202 ~ app.post ~ error:", error);
-      return res.status(500).json({
-        message: "No access",
-      });
-    }
-  });
+app.get("/auth/me", checkAuth, getUserController);
