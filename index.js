@@ -4,7 +4,7 @@ import mongoose from "mongoose"; // import mongoose for MongoDB connectivity
 import net from "net"; // import net for checking if the port is available
 import { registerValidation, loginValidation } from "./validations/auth.js"; // import registerValidation from validation folder
 import { postCreateValidation } from "./validations/post.js"; // import registerValidation from validation folder
-import checkAuth from "./utils/checkAuth.js"; // import checkAuth from utils folder
+import { handleValidationErrors, checkAuth } from "./utils/index.js";
 
 import { UserController, PostController } from "./controllers/index.js"; // import UserController from controllers folder
 
@@ -90,7 +90,7 @@ mongoose // connect to the MongoDB database
   });
 
 app.use(express.json()); // use JSON for the request and response
-app.use('/uploads', express.static('uploads')); // serve the uploads folder as static files
+app.use("/uploads", express.static("uploads")); // serve the uploads folder as static files
 
 app.use((err, req, res, next) => {
   // error handling middleware
@@ -102,9 +102,19 @@ app.use((err, req, res, next) => {
 app.get("/", (req, res) => {}); // define the root route
 
 // Login route
-app.post("/auth/login", loginValidation, UserController.login);
+app.post(
+  "/auth/login",
+  loginValidation,
+  handleValidationErrors,
+  UserController.login
+);
 // Register route
-app.post("/auth/register", registerValidation, UserController.register);
+app.post(
+  "/auth/register",
+  registerValidation,
+  handleValidationErrors,
+  UserController.register
+);
 // Get data about me
 app.get("/auth/me", checkAuth, UserController.getUser);
 
@@ -118,6 +128,18 @@ app.post("/upload", checkAuth, upload.single("image"), (req, res) => {
 // Post a new post
 app.get("/posts", PostController.getAll);
 app.get("/posts/:id", PostController.getOne);
-app.post("/posts", checkAuth, postCreateValidation, PostController.create);
+app.post(
+  "/posts",
+  checkAuth,
+  postCreateValidation,
+  handleValidationErrors,
+  PostController.create
+);
 app.delete("/posts/:id", checkAuth, PostController.remove);
-app.patch("/posts/:id", checkAuth, PostController.update);
+app.patch(
+  "/posts/:id",
+  checkAuth,
+  postCreateValidation,
+  handleValidationErrors,
+  PostController.update
+);
