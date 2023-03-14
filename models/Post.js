@@ -22,13 +22,13 @@ const PostSchema = new mongoose.Schema(
       default: [],
     },
 
-    // Define the avatarUrl field with type of string
-    avatarUrl: String,
-
     // Define the viewCount field with type of number
     viewCount: {
       type: Number,
     },
+
+    // Define the avatarUrl field with type of string
+    avatarUrl: String,
 
     // Define the user field with type of mongoose.Schema.Types.ObjectId, ref to User model and it's required
     user: {
