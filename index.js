@@ -5,6 +5,8 @@ import net from "net"; // import net for checking if the port is available
 import { validationResult } from "express-validator"; // import validationResult from express-validator
 import { registerValidation } from "./validations/auth.js"; // import registerValidation from validation folder
 import bcrypt from "bcrypt"; // import bcrypt for password encryption
+import checkAuth from "./utils/checkAuth.js"; // import checkAuth from utils folder
+
 import dotenv from "dotenv"; // import dotenv for environment variables
 dotenv.config(); // load environment variables
 
@@ -19,7 +21,8 @@ const app = express(); // create an instance of express
 const appPort = process.env.APP_PORT || 3000; // set appPort
 
 // Check if the port is already in use
-function isPortInUse(port) { // create a function that returns a promise checking if the port is in use
+function isPortInUse(port) {
+  // create a function that returns a promise checking if the port is in use
   return new Promise((resolve, reject) => {
     const server = net.createServer();
     server.once("error", (err) => {
@@ -37,7 +40,8 @@ function isPortInUse(port) { // create a function that returns a promise checkin
 }
 
 /* Start the server on the given port */
-function startServer(port) { // create a function to start the server
+function startServer(port) {
+  // create a function to start the server
   app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
   });
@@ -73,7 +77,8 @@ mongoose // connect to the MongoDB database
 
 app.use(express.json()); // use JSON for the request and response
 
-app.use((err, req, res, next) => { // error handling middleware
+app.use((err, req, res, next) => {
+  // error handling middleware
   console.error(err.stack);
   res.status(500).send("Something broke!");
 });
@@ -81,51 +86,124 @@ app.use((err, req, res, next) => { // error handling middleware
 /* ROUTES */
 app.get("/", (req, res) => {}); // define the root route
 
+// Login route
+app.post("/auth/login", async (req, res) => {
+  try {
+    const user = await UserModel.findOne({ email: req.body.email });
 
+    if (!user) {
+      return res.status(400).json({
+        message: "User not found",
+      });
+    }
+
+    const isValidPassword = await bcrypt.compare(
+      req.body.password,
+      user._doc.passwordHash
+    );
+
+    if (!isValidPassword) {
+      return res.status(400).json({
+        message: "Invalid user or password",
+      });
+    }
+
+    // generate token
+    const token = jwt.sign(
+      {
+        _id: user._id,
+      },
+      "secret123",
+      {
+        expiresIn: "30d",
+      }
+    );
+    // Return user data and token without password hash
+    const { passwordHash, ...userData } = user._doc;
+    res.json({
+      ...userData,
+      token,
+    });
+  } catch (error) {
+    // Handle errors
+    console.log("🚀 ~ file: index.js:126 ~ app.post ~ error:", error);
+    res.status(500).json({
+      message: "Something went wrong",
+    });
+  }
+});
+
+// Register route
 app.post("/auth/register", registerValidation, async (req, res) => {
+  try {
+    // Validate request data
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    // Hash password
+    const password = req.body.password;
+    const salt = await bcrypt.genSalt(10);
+    const passwordHashed = await bcrypt.hash(password, salt);
+
+    // Save user to database
+    const doc = new UserModel({
+      email: req.body.email,
+      fullName: req.body.fullName,
+      avatarUrl: req.body.avatarUrl,
+      passwordHash: passwordHashed,
+    });
+    const user = await doc.save();
+
+    // Generate JWT token
+    const token = jwt.sign(
+      {
+        _id: user._id,
+      },
+      "secret123",
+      {
+        expiresIn: "30d",
+      }
+    );
+
+    // Return user data and token without password hash
+    const { passwordHash, ...userData } = user._doc;
+    res.json({
+      ...userData,
+      token,
+    });
+  } catch (error) {
+    // Handle errors
+    console.log("🚀 ~ file: index.js:175 ~ app.post ~ error:", error);
+    res.status(500).json({
+      message: "Something went wrong",
+    });
+  }
+});
+
+
+// Get data about me
+app.get("/auth/me", checkAuth, async (req, res) => {
     try {
-      // Validate request data
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        console.log("🚀 ~ file: index.js:192 ~ app.post ~ req.userId", req.userId);
+        console.log("🚀 ~ file: index.js:192 ~ app.post ~ req.user._id", req.user._id);
+      const user = await UserModel.findById(req.user);
+      console.log("🚀 ~ file: index.js:192 ~ app.post ~ user", user);
+      if (!user) {
+        return res.status(400).json({
+          message: "/auth/me - User not found",
+        });
       }
   
-      // Hash password
-      const password = req.body.password;
-      const salt = await bcrypt.genSalt(10);
-      const passwordHashed = await bcrypt.hash(password, salt);
-  
-      // Save user to database
-      const doc = new UserModel({
-        email: req.body.email,
-        fullName: req.body.fullName,
-        avatarUrl: req.body.avatarUrl,
-        passwordHash: passwordHashed,
-      });
-      const user = await doc.save();
-  
-      // Generate JWT token
-      const token = jwt.sign(
-        {
-          _id: user._id,
-        },
-        "secret123",
-        {
-          expiresIn: "30d",
-        }
-      );
-  
-      // Return user data and token without password hash
       const { passwordHash, ...userData } = user._doc;
-      res.json({
-        ...userData,
-        token,
-      });
+      res.json(userData);
+
     } catch (error) {
       // Handle errors
-      console.log("🚀 ~ file: index.js:105 ~ app.post ~ error:", error);
-      res.status(500).json({
-        message: "Something went wrong",
+      console.log("🚀 ~ file: index.js:202 ~ app.post ~ error:", error);
+      return res.status(500).json({
+        message: "No access",
       });
     }
   });
