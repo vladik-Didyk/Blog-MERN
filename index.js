@@ -1,4 +1,5 @@
 import express from "express"; // import the express framework
+import multer from "multer"; // import multer for file upload
 import mongoose from "mongoose"; // import mongoose for MongoDB connectivity
 import net from "net"; // import net for checking if the port is available
 import { registerValidation, loginValidation } from "./validations/auth.js"; // import registerValidation from validation folder
@@ -15,6 +16,22 @@ const MONGO_URL = process.env.MONGO_URL; // set MONGO_URL from environment varia
 
 /* CONFIGURATION */
 const app = express(); // create an instance of express
+
+// create a storage for multer to specify the destination and filename of uploaded files
+const storage = multer.diskStorage({
+  // specify the destination folder where uploaded files should be stored
+  destination: (_, __, cb) => {
+    cb(null, "uploads");
+  },
+  // specify the filename for uploaded files
+  filename: (_, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
+// create an instance of multer by passing in the storage configuration
+const upload = multer({ storage });
+
 const appPort = process.env.APP_PORT || 3000; // set appPort
 
 // Check if the port is already in use
@@ -73,6 +90,7 @@ mongoose // connect to the MongoDB database
   });
 
 app.use(express.json()); // use JSON for the request and response
+app.use('/uploads', express.static('uploads')); // serve the uploads folder as static files
 
 app.use((err, req, res, next) => {
   // error handling middleware
@@ -85,12 +103,17 @@ app.get("/", (req, res) => {}); // define the root route
 
 // Login route
 app.post("/auth/login", loginValidation, UserController.login);
-
 // Register route
 app.post("/auth/register", registerValidation, UserController.register);
-
 // Get data about me
 app.get("/auth/me", checkAuth, UserController.getUser);
+
+// Upload a file
+app.post("/upload", checkAuth, upload.single("image"), (req, res) => {
+  res.json({
+    url: `/uploads/${req.file.originalname}`,
+  });
+});
 
 // Post a new post
 app.get("/posts", PostController.getAll);
