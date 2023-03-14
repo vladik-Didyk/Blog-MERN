@@ -5,7 +5,7 @@ import { validationResult } from "express-validator"; // import validationResult
 // Data imports
 import UserModel from "../models/User.js"; // import User model from models folder
 
-export const registerController = async (req, res) => {
+export const register = async (req, res) => {
   try {
     // Validate request data
     const errors = validationResult(req);
@@ -53,7 +53,7 @@ export const registerController = async (req, res) => {
   }
 };
 
-export const loginController = async (req, res) => {
+export const login = async (req, res) => {
   try {
     const user = await UserModel.findOne({ email: req.body.email });
 
@@ -91,7 +91,7 @@ export const loginController = async (req, res) => {
       token,
     });
   } catch (error) {
-    console.log("🚀 ~ file: UserController.js:94 ~ loginController ~ error:", error)
+    console.log("🚀 ~ file: User.js:94 ~ login ~ error:", error);
     // Handle errors
     res.status(500).json({
       message: "Something went wrong",
@@ -99,13 +99,10 @@ export const loginController = async (req, res) => {
   }
 };
 
-export const getUserController = async (req, res) => {
+export const getUser = async (req, res) => {
   try {
-    const user = await UserModel.findById(req.userId );
-    console.log(
-      "🚀 ~ file: UserController.js:108 ~ getUserController ~ user:",
-      user
-    );
+    const user = await UserModel.findById(req.userId);
+    console.log("🚀 ~ file: User.js:108 ~ getUser ~ user:", user);
     if (!user) {
       return res.status(400).json({
         message: "User not found",
@@ -115,10 +112,7 @@ export const getUserController = async (req, res) => {
     const { passwordHash, ...userData } = user._doc;
     res.json(userData);
   } catch (error) {
-    console.log(
-      "🚀 ~ file: UserController.js:119 ~ getUserController ~ error:",
-      error
-    );
+    console.log("🚀 ~ file: User.js:119 ~ getUser ~ error:", error);
     // Handle errors
     return res.status(500).json({
       message: "No access",
