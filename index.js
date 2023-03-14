@@ -6,11 +6,6 @@ import net from "net"; // import net for checking if the port is available
 import authRoutes from "./routes/auth.js";
 import postRoutes from "./routes/posts.js";
 
-import { registerValidation, loginValidation } from "./validations/auth.js"; // import registerValidation from validation folder
-import { postCreateValidation } from "./validations/post.js"; // import registerValidation from validation folder
-import { handleValidationErrors, checkAuth } from "./utils/index.js";
-import { UserController, PostController } from "./controllers/index.js"; // import UserController from controllers folder
-
 import dotenv from "dotenv"; // import dotenv for environment variables
 dotenv.config(); // load environment variables
 
@@ -104,47 +99,3 @@ app.use((err, req, res, next) => {
 /* ROUTES */
 app.use("/auth", authRoutes);
 app.use("/posts", postRoutes);
-
-
-// // Login route
-// app.post(
-//   "/auth/login",
-//   loginValidation,
-//   handleValidationErrors,
-//   UserController.login
-// );
-// // Register route
-// app.post(
-//   "/auth/register",
-//   registerValidation,
-//   handleValidationErrors,
-//   UserController.register
-// );
-// // Get data about me
-// app.get("/auth/me", checkAuth, UserController.getUser);
-
-// Upload a file
-// app.post("/upload", checkAuth, upload.single("image"), (req, res) => {
-//   res.json({
-//     url: `/uploads/${req.file.originalname}`,
-//   });
-// });
-
-// // Post a new post
-// app.get("/posts", PostController.getAll);
-// app.get("/posts/:id", PostController.getOne);
-// app.post(
-//   "/posts",
-//   checkAuth,
-//   postCreateValidation,
-//   handleValidationErrors,
-//   PostController.create
-// );
-// app.delete("/posts/:id", checkAuth, PostController.remove);
-// app.patch(
-//   "/posts/:id",
-//   checkAuth,
-//   postCreateValidation,
-//   handleValidationErrors,
-//   PostController.update
-// );
