@@ -1,18 +1,11 @@
 import jwt from "jsonwebtoken"; // import jwt library for token generation
 import bcrypt from "bcrypt"; // import bcrypt for password encryption
-import { validationResult } from "express-validator"; // import validationResult from express-validator
 
 // Data imports
 import UserModel from "../models/User.js"; // import User model from models folder
 
 export const register = async (req, res) => {
   try {
-    // Validate request data
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     // Hash password
     const password = req.body.password;
     const salt = await bcrypt.genSalt(10);
