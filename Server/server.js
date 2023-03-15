@@ -3,6 +3,7 @@ import multer from "multer";
 import net from "net";
 import dotenv from "dotenv";
 import { connectDB } from "./utils/db.js";
+import cors from "cors";
 
 dotenv.config();
 
@@ -65,6 +66,7 @@ function startServer(port) {
 connectDB();
 
 app.use(express.json());
+app.use(cors());
 app.use("/uploads", express.static("uploads"));
 app.use((err, req, res, next) => {
   console.error(err.stack);
