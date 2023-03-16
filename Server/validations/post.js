@@ -13,6 +13,8 @@ export const postCreateValidation = [
     .isString(),
   body("tags", "Incorrect format for tags. Please use an array.")
     .optional()
-    .isString(),
+    // .isString()
+    .isArray()
+    ,
   body("imageUrl", "Incorrect URL for image.").optional().isString(),
 ];
