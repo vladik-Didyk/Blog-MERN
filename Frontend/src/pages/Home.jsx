@@ -3,21 +3,22 @@ import { useDispatch, useSelector } from "react-redux";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Grid from "@mui/material/Grid";
-import axios from "../api/axios";
 import { Post } from "../components/Post";
 import { TagsBlock } from "../components/TagsBlock";
 import { CommentsBlock } from "../components/CommentsBlock";
-import { fetchPosts } from "../redux/slices/posts";
+import { fetchPosts, fetchTags } from "../redux/slices/posts";
 
 export const Home = () => {
   const dispatch = useDispatch();
   const { posts, tags } = useSelector((state) => state.posts);
-  console.log("🚀 ~ file: Home.jsx:15 ~ Home ~ posts:", posts)
+  console.log("🚀 ~ file: Home.jsx:15 ~ Home ~ posts:", posts);
 
   const isPostsLoading = posts.status === "loading";
+  const isTagsLoading = tags.status === "loading";
 
   useEffect(() => {
     dispatch(fetchPosts());
+    dispatch(fetchTags());
   }, []);
   return (
     <>
@@ -31,31 +32,29 @@ export const Home = () => {
       </Tabs>
       <Grid container spacing={4}>
         <Grid xs={8} item>
-          {(isPostsLoading ? [...Array(5)] : posts.items).map((element, index) =>
-            isPostsLoading ? (
-              <Post key={index} isLoading={true} />
-            ) : (
-              <Post
-                key={index}
-                id={element._id}
-                title={element.title}
-                imageUrl="https://res.cloudinary.com/practicaldev/image/fetch/s--UnAfrEG8--/c_imagga_scale,f_auto,fl_progressive,h_420,q_auto,w_1000/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/icohm5g0axh9wjmu4oc3.png"
-                user={element.user}
-                createdAt={element.createdAt}
-                viewsCount={element.viewsCount}
-                commentsCount={3}
-                isLoading={false}
-                tags={element.tags}
-                isEditable
-              />
-            )
+          {(isPostsLoading ? [...Array(5)] : posts.items).map(
+            (element, index) =>
+              isPostsLoading ? (
+                <Post key={index} isLoading={true} />
+              ) : (
+                <Post
+                  key={index}
+                  id={element._id}
+                  title={element.title}
+                  imageUrl="https://res.cloudinary.com/practicaldev/image/fetch/s--UnAfrEG8--/c_imagga_scale,f_auto,fl_progressive,h_420,q_auto,w_1000/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/icohm5g0axh9wjmu4oc3.png"
+                  user={element.user}
+                  createdAt={element.createdAt}
+                  viewsCount={element.viewsCount}
+                  commentsCount={3}
+                  isLoading={isPostsLoading}
+                  tags={element.tags}
+                  isEditable
+                />
+              )
           )}
         </Grid>
         <Grid xs={4} item>
-          <TagsBlock
-            items={["react", "typescript", "заметки"]}
-            isLoading={false}
-          />
+          <TagsBlock items={tags.items} isLoading={isTagsLoading} />
           <CommentsBlock
             items={[
               {
