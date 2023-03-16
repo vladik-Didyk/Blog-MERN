@@ -40,10 +40,10 @@ export const Home = () => {
                   key={index}
                   id={element._id}
                   title={element.title}
-                  imageUrl="https://res.cloudinary.com/practicaldev/image/fetch/s--UnAfrEG8--/c_imagga_scale,f_auto,fl_progressive,h_420,q_auto,w_1000/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/icohm5g0axh9wjmu4oc3.png"
+                  imageUrl={element.imageUrl}
                   user={element.user}
                   createdAt={element.createdAt}
-                  viewsCount={element.viewsCount}
+                  viewsCount={element.viewCount}
                   commentsCount={3}
                   isLoading={isPostsLoading}
                   tags={element.tags}
