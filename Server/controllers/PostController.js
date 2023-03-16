@@ -2,7 +2,8 @@
 import PostModel from "../models/Post.js";
 
 /**
- * getAll: async function that tries to retrieve all posts from the database using the PostModel.
+ * getAll:
+ * async function that tries to retrieve all posts from the database using the PostModel.
  * If successful, it sends the retrieved posts to the client as a JSON response.
  * If there is an error, it logs the error to the console and sends an error response
  * to the client with a status of 500 and a message of "Something went wrong - can't get posts".
@@ -13,7 +14,6 @@ export const getAll = async (req, res) => {
     const posts = await PostModel.find().populate("user").exec();
     res.json(posts);
   } catch (error) {
-    console.log("🚀 ~ file: PostController.js:9 ~ getAll ~ error:", error);
     res.status(500).json({
       message: "Something went wrong - can't get posts",
     });
@@ -21,7 +21,8 @@ export const getAll = async (req, res) => {
 };
 
 /**
- * getOne: async function that tries to retrieve a single post by ID from the database using the PostModel.
+ * getOne:
+ * async function that tries to retrieve a single post by ID from the database using the PostModel.
  * If successful, it increments the view count of the retrieved post,
  * sends the updated post to the client as a JSON response.
  * If there is no post found, it sends an error response to the client with
@@ -45,7 +46,6 @@ export const getOne = async (req, res) => {
 
     res.json(updatedPost);
   } catch (error) {
-    console.log("🚀 ~ file: PostController.js:32 ~ getOne ~ error:", error);
     res.status(500).json({
       message: "Something went wrong - can't get post",
     });
@@ -53,7 +53,8 @@ export const getOne = async (req, res) => {
 };
 
 /**
- * create: async function that tries to create a new post in the database using the PostModel.
+ * create:
+ * async function that tries to create a new post in the database using the PostModel.
  * If successful, it sends the newly created post to the client as a JSON response.
  * If there is an error, it logs the error to the console and sends an error response
  * to the client with a status of 500 and a message of "Something went wrong".
@@ -73,7 +74,6 @@ export const create = async (req, res) => {
 
     res.json(post);
   } catch (error) {
-    console.log("🚀 ~ file: PostController.js:18 ~ create ~ error:", error);
     res.status(500).json({
       message: "Something went wrong",
     });
@@ -81,7 +81,8 @@ export const create = async (req, res) => {
 };
 
 /**
- * remove: async function that tries to remove a single post by ID from the database using the PostModel.
+ * remove:
+ * async function that tries to remove a single post by ID from the database using the PostModel.
  * If successful, it sends a success message to the client as a JSON response.
  * If there is no post found, it sends an error response to the client with a status of 404 and a message of
  * "Post was not deleted". If there is an error,
@@ -103,7 +104,6 @@ export const remove = async (req, res) => {
       message: "Post was deleted",
     });
   } catch (error) {
-    console.log("🚀 ~ file: PostController.js:32 ~ getOne ~ error:", error);
     res.status(500).json({
       message: "Something went wrong - can't get posts",
     });
@@ -111,7 +111,8 @@ export const remove = async (req, res) => {
 };
 
 /**
- * update: async function that tries to update a single post by ID in the database using the PostModel.
+ * update:
+ * async function that tries to update a single post by ID in the database using the PostModel.
  * If successful, it sends a success message to the client as a JSON response.
  * If there is no post found, it sends an error response to the client with a status of 404 and a message
  * of "Post was not updated".
@@ -141,7 +142,6 @@ export const update = async (req, res) => {
       success: "Post was updated",
     });
   } catch (error) {
-    console.log("🚀 ~ file: PostController.js:103 ~ update ~ error:", error);
     res.status(500).json({
       message: "Something went wrong - can't get posts",
     });

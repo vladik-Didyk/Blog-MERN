@@ -1,29 +1,31 @@
-// routes/auth.js
-
 import express from "express";
-import { registerValidation, loginValidation } from "../validations/auth.js"; // import registerValidation from validation folder
-import { handleValidationErrors, checkAuth } from "../utils/index.js";
-import { UserController } from "../controllers/index.js"; // import UserController from controllers folder
+import { registerValidation, loginValidation } from "../validations/auth.js"; // Import registerValidation and loginValidation from validations folder
+import { handleValidationErrors, checkAuth } from "../utils/index.js"; // Import middleware from utils folder
+import { UserController } from "../controllers/index.js"; // Import UserController from controllers folder
 
 const router = express.Router();
 
-// Login route
+// Route to log in a user
 router.post(
   "/login",
-  loginValidation,
-  handleValidationErrors,
-  UserController.login
+  loginValidation, // Middleware to validate the login data
+  handleValidationErrors, // Middleware to handle validation errors
+  UserController.login // Controller function to log in a user
 );
 
-// Register route
+// Route to register a new user
 router.post(
   "/register",
-  registerValidation,
-  handleValidationErrors,
-  UserController.register
+  registerValidation, // Middleware to validate the registration data
+  handleValidationErrors, // Middleware to handle validation errors
+  UserController.register // Controller function to register a new user
 );
 
-// Get data about me
-router.get("/me", checkAuth, UserController.getUser);
+// Route to get data about the currently authenticated user
+router.get(
+  "/me",
+  checkAuth, // Middleware to check if the user is authenticated
+  UserController.getUser // Controller function to get the authenticated user's data
+);
 
 export default router;
