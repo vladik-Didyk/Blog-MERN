@@ -1,11 +1,12 @@
-import React from "react";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
+import {
+  Skeleton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+} from "@mui/material";
 import TagIcon from "@mui/icons-material/Tag";
-import ListItemText from "@mui/material/ListItemText";
-import Skeleton from "@mui/material/Skeleton";
 
 import { SideBlock } from "./SideBlock";
 

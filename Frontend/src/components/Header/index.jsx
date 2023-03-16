@@ -1,11 +1,10 @@
-import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import Button from "@mui/material/Button";
-
-import Container from "@mui/material/Container";
-import styles from "./Header.module.scss";
 import { logOut, selectIsAuth } from "../../redux/slices/auth";
+
+import { Link } from "react-router-dom";
+import { Container, Button } from "@mui/material";
+
+import styles from "./Header.module.scss";
 
 export const Header = () => {
   const dispatch = useDispatch();

@@ -1,11 +1,5 @@
-import React from 'react';
-import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
-import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
-import Avatar from '@mui/material/Avatar';
-
-import styles from './Login.module.scss';
+import { Avatar, Button, Paper, TextField, Typography } from "@mui/material/";
+import styles from "./Login.module.scss";
 
 export const Registration = () => {
   return (
@@ -25,3 +19,4 @@ export const Registration = () => {
     </Paper>
   );
 };
+
