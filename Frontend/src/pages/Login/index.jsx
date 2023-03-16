@@ -16,22 +16,40 @@ const initialState = {
 };
 
 export const Login = () => {
+  // Check if user is authenticated using Redux useSelector
   const isAuth = useSelector(selectIsAuth);
+
+  // Initialize Redux useDispatch for dispatching actions
   const dispatch = useDispatch();
 
+  // Configure useForm with initial state, error handling, and form state
   const {
     register,
     handleSubmit,
-    setError,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm(initialState);
 
-  const onSubmit = (values) => {
-    dispatch(fetchAuth(values));
+  // Define onSubmit function to handle form submission
+  const onSubmit = async (values) => {
+    // Dispatch fetchAuth action with submitted form values
+    const data = await dispatch(fetchAuth(values));
+
+    // Check if data payload is received
+    if (!data?.payload) {
+      return alert("Ошибка при авторизации");
+    }
+
+    // Check if the payload contains a token
+    if ("token" in data?.payload) {
+      // Save token to localStorage
+      window.localStorage.setItem("token", data.payload.token);
+    } else {
+      // Show an error message if the payload doesn't contain a token
+      return alert("Ошибка при авторизации");
+    }
   };
 
-  console.log(isAuth);
-
+  // Redirect to the home page if the user is authenticated
   if (isAuth) {
     return <Navigate to="/" />;
   }
