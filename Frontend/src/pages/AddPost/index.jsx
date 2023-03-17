@@ -38,7 +38,7 @@ export const AddPost = () => {
     []
   );
 
-  if (!isAuth) {
+  if (!window.localStorage.getItem("token") && !isAuth) {
     return <Navigate to="/login" />;
   }
 
