@@ -1,8 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
+import { fetchAuth, selectIsAuth } from "../../redux/slices/auth";
 import { Navigate } from "react-router-dom";
 import { Typography, TextField, Paper, Button } from "@mui/material";
 import { useForm } from "react-hook-form";
-import { fetchAuth, selectIsAuth } from "../../redux/slices/auth";
 
 import styles from "./Login.module.scss";
 
@@ -25,7 +25,7 @@ export const Login = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm(initialState);
 
   // Define onSubmit function to handle form submission
@@ -65,7 +65,6 @@ export const Login = () => {
           type={"email"}
           error={Boolean(errors.email?.message)}
           helperText={errors.email?.message}
-          // helperText="Неверно указана почта"
           {...register("email", {
             required: 'Поле "E-Mail" обязательно для заполнения',
           })}
@@ -81,7 +80,13 @@ export const Login = () => {
           })}
           fullWidth
         />
-        <Button type="submit" size="large" variant="contained" fullWidth>
+        <Button
+          disabled={!isValid}
+          type="submit"
+          size="large"
+          variant="contained"
+          fullWidth
+        >
           Войти
         </Button>
       </form>
