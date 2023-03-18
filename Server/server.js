@@ -1,5 +1,4 @@
 import express from "express";
-import multer from "multer";
 import net from "net";
 import dotenv from "dotenv";
 import { connectDB } from "./utils/db.js";
@@ -9,15 +8,7 @@ dotenv.config();
 
 /* CONFIGURATION */
 const app = express();
-const storage = multer.diskStorage({
-  destination: (_, __, cb) => {
-    cb(null, "uploads");
-  },
-  filename: (_, file, cb) => {
-    cb(null, file.originalname);
-  },
-});
-const upload = multer({ storage });
+
 /* ENVIRONMENT VARIABLES */
 const appPort = process.env.APP_PORT || 3000;
 
@@ -67,7 +58,6 @@ connectDB();
 
 app.use(express.json());
 app.use(cors());
-app.use("/uploads", express.static("uploads"));
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send("Something broke!");
