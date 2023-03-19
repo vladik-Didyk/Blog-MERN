@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAuthMe,selectIsAuth } from "./redux/slices/auth";
+import { fetchAuthMe, selectIsAuth } from "./redux/slices/auth";
 
 import Container from "@mui/material/Container";
 
@@ -23,6 +23,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/posts/:id" element={<FullPost />} />
+          <Route path="/posts/:id/edit" element={<AddPost />} />
           <Route path="/add-post" element={<AddPost />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Registration />} />
