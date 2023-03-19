@@ -1,3 +1,4 @@
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAuth, selectIsAuth } from "../../redux/slices/auth";
 import { Navigate } from "react-router-dom";
@@ -39,7 +40,7 @@ export const Login = () => {
     }
 
     // Check if the payload contains a token
-    if ("token" in data?.payload) {
+    if ("token" in (data ?? {}).payload) {
       // Save token to localStorage
       window.localStorage.setItem("token", data.payload.token);
     } else {

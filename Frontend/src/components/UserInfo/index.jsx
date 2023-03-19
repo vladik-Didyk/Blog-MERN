@@ -1,11 +1,13 @@
-import styles from "./UserInfo.module.scss";
+import React from 'react';
+import PropTypes from 'prop-types';
+import styles from './UserInfo.module.scss';
 
 export const UserInfo = ({ avatarUrl, fullName, additionalText }) => {
   return (
     <div className={styles.root}>
       <img
         className={styles.avatar}
-        src={avatarUrl || "/noavatar.png"}
+        src={avatarUrl || '/noavatar.png'}
         alt={fullName}
       />
       <div className={styles.userDetails}>
@@ -16,3 +18,13 @@ export const UserInfo = ({ avatarUrl, fullName, additionalText }) => {
   );
 };
 
+UserInfo.propTypes = {
+  avatarUrl: PropTypes.string,
+  fullName: PropTypes.string.isRequired,
+  additionalText: PropTypes.string,
+};
+
+UserInfo.defaultProps = {
+  avatarUrl: '/noavatar.png',
+  additionalText: '',
+};

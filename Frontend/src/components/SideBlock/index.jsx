@@ -1,3 +1,6 @@
+import React from "react";
+import PropTypes from "prop-types";
+
 import { Paper, Typography } from "@mui/material";
 import styles from "./SideBlock.module.scss";
 
@@ -10,5 +13,14 @@ export const SideBlock = ({ title, children }) => {
       {children}
     </Paper>
   );
+};
+
+// Add propTypes to the SideBlock component
+SideBlock.propTypes = {
+  title: PropTypes.string.isRequired,
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.node),
+    PropTypes.node,
+  ]).isRequired,
 };
 

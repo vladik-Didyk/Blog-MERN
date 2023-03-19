@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchRegister, selectIsAuth } from "../../redux/slices/auth";
 import { useForm } from "react-hook-form";
@@ -35,12 +35,12 @@ export const Registration = () => {
     const data = await dispatch(fetchRegister(values));
 
     // Check if data payload is received
-    if (!data?.payload) {
+    if (!(data ?? {}).payload) {
       return alert("Ошибка при регистрации");
     }
 
     // Check if the payload contains a token
-    if ("token" in data?.payload) {
+    if ("token" in (data ?? {}).payload) {
       // Save token to localStorage
       window.localStorage.setItem("token", data.payload.token);
     } else {

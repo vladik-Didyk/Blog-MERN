@@ -1,3 +1,4 @@
+import React from "react";
 import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { selectIsAuth } from "../../redux/slices/auth";
@@ -15,7 +16,6 @@ export const AddPost = () => {
   const navigate = useNavigate();
   const inputFileRef = useRef(null);
   const isAuth = useSelector(selectIsAuth);
-  const [isLoading, setLoading] = useState(false);
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const [tags, setTags] = useState("");
@@ -37,11 +37,9 @@ export const AddPost = () => {
   const onClickRemoveImage = () => setImageUrl("");
   const onChange = useCallback((value) => setText(value), []);
   const onSubmit = async () => {
-    setLoading(true);
     const validationErrors = uploadValidation(title, text, tags, imageUrl);
     if (validationErrors.length > 0) {
       alert(validationErrors.join("\n"));
-      setLoading(false);
       return;
     }
     const tagsArray = tags.split(",").map((tag) => tag.trim());
@@ -53,8 +51,6 @@ export const AddPost = () => {
       navigate(`/posts/${isEditing ? id : data._id}`);
     } catch (error) {
       alert("Ошибка при добавлении статьи");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -81,7 +77,7 @@ export const AddPost = () => {
   }, [id]);
 
   if (!isAuth) return <Navigate to="/login" />;
-  
+
   return (
     <Paper style={{ padding: 30 }}>
       <Button

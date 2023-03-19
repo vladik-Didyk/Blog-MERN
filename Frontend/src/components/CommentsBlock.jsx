@@ -1,4 +1,6 @@
 import React from "react";
+import PropTypes from "prop-types";
+
 import { SideBlock } from "./SideBlock";
 import {
   Skeleton,
@@ -45,3 +47,8 @@ export const CommentsBlock = ({ items, children, isLoading = true }) => {
   );
 };
 
+CommentsBlock.propTypes = {
+  items: PropTypes.array,
+  children: PropTypes.node,
+  isLoading: PropTypes.bool,
+};

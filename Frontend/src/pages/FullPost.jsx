@@ -1,3 +1,5 @@
+/* eslint-env node */
+import React from "react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Post } from "../components/Post";
@@ -18,7 +20,7 @@ export const FullPost = () => {
         setData(res.data);
         setIsLoading(false);
       })
-      .catch((err) => {
+      .catch(() => {
         alert("Ошибка при загрузке поста");
       });
   }, [id]);
@@ -46,7 +48,7 @@ export const FullPost = () => {
         isEditable
         isFullPost
       >
-        <ReactMarkdown children={data.text}>{data.text}</ReactMarkdown>
+        <ReactMarkdown>{data.text}</ReactMarkdown>
       </Post>
       <CommentsBlock
         items={[
@@ -72,4 +74,3 @@ export const FullPost = () => {
     </>
   );
 };
-

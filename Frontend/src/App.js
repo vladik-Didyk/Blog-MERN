@@ -1,3 +1,4 @@
+import React from "react";
 // Import React hooks and components
 import { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
@@ -17,7 +18,7 @@ import { Home, FullPost, Registration, AddPost, Login } from "./pages";
 function App() {
   // Initialize Redux hooks
   const dispatch = useDispatch();
-  const isAuth = useSelector(selectIsAuth);
+  useSelector(selectIsAuth);
 
   // Fetch user authentication status on component mount
   useEffect(() => {

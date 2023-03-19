@@ -1,3 +1,6 @@
+import React from "react";
+import PropTypes from "prop-types";
+
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import clsx from "clsx";
@@ -61,7 +64,9 @@ export const Post = ({
       <div className={styles.wrapper}>
         <UserInfo {...user} additionalText={createdAt} />
         <div className={styles.indention}>
-          <h2 className={clsx(styles.title, { [styles.titleFull]: isFullPost })}>
+          <h2
+            className={clsx(styles.title, { [styles.titleFull]: isFullPost })}
+          >
             {isFullPost ? title : <Link to={`/posts/${id}`}>{title}</Link>}
           </h2>
           <ul className={styles.tags}>
@@ -86,4 +91,31 @@ export const Post = ({
       </div>
     </div>
   );
+};
+
+Post.propTypes = {
+  id: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  createdAt: PropTypes.string.isRequired,
+  imageUrl: PropTypes.string,
+  user: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    fullName: PropTypes.string.isRequired,
+    avatarUrl: PropTypes.string,
+  }).isRequired,
+  viewsCount: PropTypes.number.isRequired,
+  commentsCount: PropTypes.number.isRequired,
+  tags: PropTypes.arrayOf(PropTypes.string).isRequired,
+  children: PropTypes.node,
+  isFullPost: PropTypes.bool,
+  isLoading: PropTypes.bool,
+  isEditable: PropTypes.bool,
+};
+
+Post.defaultProps = {
+  imageUrl: "",
+  children: null,
+  isFullPost: false,
+  isLoading: false,
+  isEditable: false,
 };

@@ -1,3 +1,4 @@
+import React from "react";
 import { Skeleton, Stack } from "@mui/material";
 
 import styles from "./Post.module.scss";

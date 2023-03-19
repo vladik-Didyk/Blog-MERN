@@ -1,3 +1,4 @@
+import React from "react";
 import { Button, Avatar, TextField } from "@mui/material";
 
 import styles from "./AddComment.module.scss";

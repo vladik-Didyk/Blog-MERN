@@ -1,3 +1,6 @@
+import React from "react";
+import PropTypes from "prop-types"; 
+
 import {
   Skeleton,
   List,
@@ -39,3 +42,8 @@ export const TagsBlock = ({ items, isLoading = true }) => {
   );
 };
 
+// Add propTypes to the TagsBlock component
+TagsBlock.propTypes = {
+  items: PropTypes.arrayOf(PropTypes.string),
+  isLoading: PropTypes.bool,
+};
