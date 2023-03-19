@@ -41,7 +41,11 @@ export const Home = () => {
                   key={index}
                   id={element._id}
                   title={element.title}
-                  imageUrl={element.imageUrl}
+                  imageUrl={
+                    element.imageUrl
+                      ? `${process.env.REACT_APP_BACKEND_PORT}${element.imageUrl}`
+                      : ""
+                  }
                   user={element.user}
                   createdAt={element.createdAt}
                   viewsCount={element.viewCount}
