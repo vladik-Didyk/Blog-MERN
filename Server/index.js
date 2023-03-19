@@ -11,9 +11,8 @@ import uploadRoutes from "./routes/upload.js";
 app.use("/auth", authRoutes);
 app.use("/posts", postRoutes);
 app.use("/tags", tagsRoutes);
+
 app.use("/uploads", express.static("uploads"));
-
-app.use("/uploads", uploadRoutes); // Add this line to use the upload route
-
+app.use("/uploads", uploadRoutes); 
 
 start();
