@@ -19,10 +19,9 @@ export const FullPost = () => {
         setIsLoading(false);
       })
       .catch((err) => {
-        console.log(err);
         alert("Ошибка при загрузке поста");
       });
-  }, []);
+  }, [id]);
 
   if (isLoading) {
     return <Post isLoading={isLoading} isFullPost />;
