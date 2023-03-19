@@ -22,7 +22,7 @@ function App() {
   // Fetch user authentication status on component mount
   useEffect(() => {
     dispatch(fetchAuthMe());
-  }, []);
+  }, [dispatch]);
 
   // Render the application layout
   return (
@@ -59,3 +59,4 @@ function App() {
 
 // Export App component
 export default App;
+
