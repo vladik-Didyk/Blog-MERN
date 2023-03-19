@@ -4,9 +4,7 @@ import { selectIsAuth } from "../../redux/slices/auth";
 import axios from "../../api/axios";
 import { uploadValidation } from "../../utilities/uploadValidation";
 import { Button, Paper, TextField } from "@mui/material";
-
 import SimpleMDE from "react-simplemde-editor";
-
 import "easymde/dist/easymde.min.css";
 import styles from "./AddPost.module.scss";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
@@ -18,75 +16,45 @@ export const AddPost = () => {
   const inputFileRef = useRef(null);
   const isAuth = useSelector(selectIsAuth);
   const [isLoading, setLoading] = useState(false);
-
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const [tags, setTags] = useState("");
   const [imageUrl, setImageUrl] = useState("");
 
   const handleChangeFile = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append("image", file, file.name);
     try {
-      const file = event.target.files[0];
-
-      if (!file) {
-        console.warn("No file selected");
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append("image", file, file.name); // Add the filename property here
-
       const { data } = await axios.post("/uploads", formData);
-
-      console.log(data);
       setImageUrl(data.url);
     } catch (error) {
-      console.warn(error);
       alert("Ошибка при загрузке файла");
     }
   };
 
-  const onClickRemoveImage = () => {
-    setImageUrl("");
-  };
-
-  const onChange = useCallback((value) => {
-    setText(value);
-  }, []);
-
+  const onClickRemoveImage = () => setImageUrl("");
+  const onChange = useCallback((value) => setText(value), []);
   const onSubmit = async () => {
     setLoading(true);
-
     const validationErrors = uploadValidation(title, text, tags, imageUrl);
     if (validationErrors.length > 0) {
-      // Display the validation errors to the user, for example using an alert.
       alert(validationErrors.join("\n"));
+      setLoading(false);
       return;
     }
-
-    // Split the tags string by comma and trim whitespace
     const tagsArray = tags.split(",").map((tag) => tag.trim());
-
-    const fileds = {
-      title,
-      text,
-      tags: tagsArray,
-      imageUrl,
-    };
-
+    const fields = { title, text, tags: tagsArray, imageUrl };
     try {
       const { data } = isEditing
-        ? await axios.patch(`/posts/${id}`, fileds)
-        : await axios.post("/posts", fileds);
-
-      const _id = isEditing ? id : data._id;
-
-      navigate(`/posts/${_id}`);
-
-      setLoading(false);
+        ? await axios.patch(`/posts/${id}`, fields)
+        : await axios.post("/posts", fields);
+      navigate(`/posts/${isEditing ? id : data._id}`);
     } catch (error) {
-      setLoading(false);
       alert("Ошибка при добавлении статьи");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -97,32 +65,23 @@ export const AddPost = () => {
       autofocus: true,
       placeholder: "Введите текст...",
       status: false,
-      autosave: {
-        enabled: true,
-        delay: 1000,
-      },
+      autosave: { enabled: true, delay: 1000 },
     }),
     []
   );
 
   useEffect(() => {
-    try {
-      if (id) {
-        axios.get(`/posts/${id}`).then(({ data }) => {
-          setTitle(data.title);
-          setText(data.text);
-          setTags(data.tags.join(", "));
-          setImageUrl(data.imageUrl);
-        });
-      }
-    } catch (error) {
-      alert("Ошибка при редактировании статьи");
-    }
-  }, []);
+    if (!id) return;
+    axios.get(`/posts/${id}`).then(({ data }) => {
+      setTitle(data.title);
+      setText(data.text);
+      setTags(data.tags.join(", "));
+      setImageUrl(data.imageUrl);
+    });
+  }, [id]);
 
-  if (!window.localStorage.getItem("token") && !isAuth) {
-    return <Navigate to="/login" />;
-  }
+  if (!isAuth) return <Navigate to="/login" />;
+  
   return (
     <Paper style={{ padding: 30 }}>
       <Button
