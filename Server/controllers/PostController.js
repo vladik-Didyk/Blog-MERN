@@ -38,7 +38,7 @@ export const getOne = async (req, res) => {
       { _id: postId },
       { $inc: { viewCount: 1 } },
       { new: true }
-    );
+    ).populate("user");
 
     if (!updatedPost) {
       return res.status(404).json({ message: "Post not found" });
