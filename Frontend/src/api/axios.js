@@ -3,7 +3,7 @@ import axios from "axios";
 
 // Create axios instance with a base URL
 const instance = axios.create({
-  baseURL: "http://localhost:4444/",
+  baseURL: `${process.env.REACT_APP_BACKEND_PORT}/`,
 });
 
 // Add request interceptor to modify request configuration
