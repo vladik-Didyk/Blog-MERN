@@ -2,20 +2,23 @@ import { useState, useMemo, useCallback, useRef } from "react";
 import { useSelector } from "react-redux";
 import { selectIsAuth } from "../../redux/slices/auth";
 import axios from "../../api/axios";
+import { uploadValidation } from "../../utilities/uploadValidation";
 import { Button, Paper, TextField } from "@mui/material";
 
 import SimpleMDE from "react-simplemde-editor";
 
 import "easymde/dist/easymde.min.css";
 import styles from "./AddPost.module.scss";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export const AddPost = () => {
+  const navigate = useNavigate();
   const inputFileRef = useRef(null);
   const isAuth = useSelector(selectIsAuth);
+  const [isLoading, setLoading] = useState(false);
 
   const [title, setTitle] = useState("");
-  const [value, setValue] = useState("");
+  const [text, setText] = useState("");
   const [tags, setTags] = useState("");
   const [imageUrl, setImageUrl] = useState("");
 
@@ -30,9 +33,9 @@ export const AddPost = () => {
 
       const formData = new FormData();
       formData.append("image", file, file.name); // Add the filename property here
-      debugger;
+
       const { data } = await axios.post("/uploads", formData);
-      debugger;
+
       console.log(data);
       setImageUrl(data.url);
     } catch (error) {
@@ -46,8 +49,41 @@ export const AddPost = () => {
   };
 
   const onChange = useCallback((value) => {
-    setValue(value);
+    setText(value);
   }, []);
+
+  const onSubmit = async () => {
+    setLoading(true);
+
+    const validationErrors = uploadValidation(title, text, tags, imageUrl);
+    if (validationErrors.length > 0) {
+      // Display the validation errors to the user, for example using an alert.
+      alert(validationErrors.join("\n"));
+      return;
+    }
+
+    // Split the tags string by comma and trim whitespace
+    const tagsArray = tags.split(",").map((tag) => tag.trim());
+
+    const fileds = {
+      title,
+      text,
+      tags: tagsArray,
+      imageUrl,
+    };
+     
+    try {
+      const { data } = await axios.post("/posts", fileds);
+      const id = data._id;
+       
+      navigate(`/posts/${id}`);
+
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      alert("Ошибка при добавлении статьи");
+    }
+  };
 
   const options = useMemo(
     () => ({
@@ -120,12 +156,12 @@ export const AddPost = () => {
       />
       <SimpleMDE
         className={styles.editor}
-        value={value}
+        value={text}
         onChange={onChange}
         options={options}
       />
       <div className={styles.buttons}>
-        <Button size="large" variant="contained">
+        <Button onClick={onSubmit} size="large" variant="contained">
           Опубликовать
         </Button>
         <a href="/">
