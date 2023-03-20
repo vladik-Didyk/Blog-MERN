@@ -9,8 +9,8 @@ import styles from "./Login.module.scss";
 
 const initialState = {
   defaultValues: {
-    email: "edasw3jer@dsaf.com",
-    password: "13456",
+    email: "",
+    password: "",
   },
   mode: "onChange",
 };
